@@ -1,7 +1,7 @@
-## ----global_options, include=FALSE---------------------------------------
+## ----global_options, include=FALSE--------------------------------------------
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(drord)
 
 # load data
@@ -10,7 +10,7 @@ data(covid19)
 # look at first 3 rows
 head(covid19, 3)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 (fit1 <- drord(out = covid19$out, treat = covid19$treat, 
                covar = covid19[ , "age_grp", drop = FALSE]))
 
@@ -37,20 +37,20 @@ pmf_plot$plot +
                      color = "white", 
                      vjust = "bottom")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 (fit2 <- drord(out = covid19$out, treat = covid19$treat, 
                covar = covid19[ , "age_grp", drop = FALSE],
                out_form = "factor(age_grp)",
                treat_form = "factor(age_grp)"))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # age_grp treated as numeric in fit1
 fit1$out_mod$treat1
 
 # age_grp treated as factor in fit2
 fit2$out_mod$treat1
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # use vglm to fit model instead
 fit3 <- drord(out = covid19$out, treat = covid19$treat, 
               covar = covid19[ , "age_grp", drop = FALSE],
@@ -59,19 +59,19 @@ fit3 <- drord(out = covid19$out, treat = covid19$treat,
 # view model output
 fit3$out_mod$treat1
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 (fit4 <- drord(out = covid19$out, treat = covid19$treat, 
                covar = covid19[ , "age_grp", drop = FALSE],
                ci = "bca", nboot = 20, # use more bootstrap samples in practice!!!
                param = "mann_whitney", # only compute mann-whitney estimator
                est_dist = FALSE)) # save time by not computing CIs for CDF/PMF
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 (fit5 <- drord(out = covid19$out, treat = covid19$treat, 
                covar = covid19[ , "age_grp", drop = FALSE],
                stratify = TRUE))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 (fit6 <- drord(out = covid19$out, treat = covid19$treat, 
                covar = covid19[ , "age_grp", drop = FALSE],
                stratify = TRUE, out_form = "1",
@@ -81,7 +81,7 @@ fit3$out_mod$treat1
 (samp_mean_treat1 <- mean(covid19$out[covid19$treat == 1]))
 (samp_mean_treat0 <- mean(covid19$out[covid19$treat == 0]))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # missingness probability
 miss_out_prob <- plogis(-2 + as.numeric(covid19$age_grp < 5))
 miss_out <- rbinom(nrow(covid19), 1, miss_out_prob) == 1
@@ -93,7 +93,7 @@ out_with_miss[miss_out] <- NA
                covar = covid19[ , "age_grp", drop = FALSE], 
                treat_form = "I(age_grp < 5)"))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # collapse categories to make a binary outcome
 covid19_binary_out <- as.numeric(covid19$out == 3)
 
@@ -107,6 +107,6 @@ covid19_binary_out <- as.numeric(covid19$out == 3)
 # confirm that glm was used for outcome model
 class(fit8$out_mod$treat1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 sessionInfo()
 

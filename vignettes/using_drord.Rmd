@@ -33,7 +33,7 @@ preamble: >
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{drord: Doubly robust estimators of ordinal treatment effects}
+  %\VignetteIndexEntry{`drord`: Doubly robust estimators of ordinal treatment effects}
   %\VignetteEncoding{UTF-8}
 bibliography: refs.bib
 ---
@@ -183,7 +183,7 @@ pmf_plot$plot +
 
 ## Working model controls
 
-In the simple call, we used default working models. The `drord` documentation indicates that the working model fits can be controlled via the `out_form` and `treat_form` models. These options include the right-hand-side of a regression formula for estimation of their respective nuisance parameters. The default for the outcome model (`out_form = ".")`is a main-effects proportional odds model (fit using `ordinal::clm`). The default for the treatment model is an intercept-only logistic regression model (`treat_form = 1`), i.e., the sample proportion of individuals in each treatment arm. Here, we illustrate another call to `drord` where we treat `age_grp` as a `factor` rather than numeric in the outcome model and include adjustment for `age_grp` in the propensity model. 
+In the simple call, we used default working models. The `drord` documentation indicates that the working model fits can be controlled via the `out_form` and `treat_form` models. These options include the right-hand-side of a regression formula for estimation of their respective nuisance parameters. The default for the outcome model (`out_form = ".")`is a main-effects pooled logistic regression model for proportional odds. The default for the treatment model is an intercept-only logistic regression model (`treat_form = 1`), i.e., the sample proportion of individuals in each treatment arm. Here, we illustrate another call to `drord` where we treat `age_grp` as a `factor` rather than numeric in the outcome model and include adjustment for `age_grp` in the propensity model. 
 
 ```{r}
 (fit2 <- drord(out = covid19$out, treat = covid19$treat, 
@@ -202,7 +202,7 @@ fit1$out_mod$treat1
 fit2$out_mod$treat1
 ```
 
-Other packages are available for fitting the proportional odds models. While the model is the same in each package, the numerical routines for estimating model parameters are different. Thus, if warnings or errors appear in the `ordinal` fitting routine, one may consider one of the alternative packages. Options are `vglm` (from the `VGAM` package), or `polr` (from the `MASS` package). In simulations, we have seen more stable performance from `vglm` and `clm`. Here we demonstrate this control.
+Other packages are available for fitting the proportional odds models, though for technical reasons, these approaches are not generally recommended. Each of the three proportional odds implementations that are available are based on the same model, but the numerical routines for estimating model parameters are different. Thus, if warnings or errors appear in the `ordinal` fitting routine, one may consider one of the alternative packages. Options are `vglm` (from the `VGAM` package), or `polr` (from the `MASS` package). In simulations, we have seen more stable performance from `vglm` and `clm`. Here we demonstrate this control.
 
 ```{r}
 # use vglm to fit model instead
@@ -216,7 +216,7 @@ fit3$out_mod$treat1
 
 ## Bootstrap confidence intervals
 
-By default, `drord` will used closed-form inference. While this is generally faster, we may instead prefer to use bootstrap confidence intervals, which should provide more robust behavior when working models are misspecified. Bootstrap intervals can be requested via the `ci = "bca"`, with option `nboot` determining the number of bootstrap resamples performed. The bootstrap employed by the package is the bias corrected and accelerated bootstrap [@efron1994introduction]. **In practice, we recommend using many bootstrap samples** (e.g., the package default, `nboot = 1e4`), so that inference is not dependent on the random seed that is set; however, here we illustrate using a small number of bootstrap samples for fast compilation of this vignette. To increase speed, we also turn off estimation of confidence intervals for the CDF and PMF by setting `est_dist = FALSE`. 
+By default, `drord` will used closed-form inference. While this is generally faster, we may instead prefer to use bootstrap confidence intervals, which should provide more robust behavior when working models are misspecified. Bootstrap intervals can be requested via the `ci = "bca"`, with option `nboot` determining the number of bootstrap resamples performed. The bootstrap employed by the package is the bias corrected and accelerated bootstrap [@efron1994introduction]. **In practice, we recommend using many bootstrap samples** (e.g., `nboot = 1e4`), so that inference is not dependent on the random seed that is set; however, here we illustrate using a small number of bootstrap samples for fast compilation of this vignette. To increase speed, we also turn off estimation of confidence intervals for the CDF and PMF by setting `est_dist = FALSE`. 
 
 ```{r}
 (fit4 <- drord(out = covid19$out, treat = covid19$treat, 

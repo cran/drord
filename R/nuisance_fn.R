@@ -99,7 +99,7 @@ estimate_pmf <- function(
 	                              stratify = stratify),
 	              SIMPLIFY = FALSE)
 	rout <- list(fm = list(treat1 = out[[1]]$fm_treat, treat0 = out[[2]]$fm_treat),
-	             pmf = list(out[[1]]$pmf_treat, out[[2]]$pmf_treat)) #!!! CHECK
+	             pmf = list(out[[1]]$pmf_treat, out[[2]]$pmf_treat)) 
 	return(rout)
 }
 
@@ -202,6 +202,12 @@ fit_trt_spec_reg <- function(
 				      		   weights = 1/trt_spec_prob_est[treat == trt_level])
 			 	pmf_treat <- stats::predict(fm_trt, newdata = data.frame(covar),
 		 			        		 type = "prob")$fit
+		 	}else if(out_model == "pooled-logistic"){
+		 		out_f <- factor(out, ordered = TRUE)
+		 		fm_trt <- POplugin(form = stats::as.formula(paste0("factor(out, ordered = TRUE) ~", out_form)),
+		 		                   data = data.frame(out = out_f, covar)[treat == trt_level, , drop = FALSE], 
+		 		                   weights = 1 / trt_spec_prob_est[treat == trt_level])
+		 		pmf_treat <- stats::predict(fm_trt, newdata = data.frame(covar))
 		 	}
 		 	# add in columns of 0's for unobserved outcome levels and re-order things accordingly
 		 	obs_out_levels <- colnames(pmf_treat)

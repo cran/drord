@@ -10,14 +10,14 @@ drord(
   treat,
   covar,
   out_levels = sort(unique(out)),
-  out_form = ".",
+  out_form = paste0(colnames(covar), collapse = "+"),
   out_weights = rep(1, length(out_levels)),
-  out_model = c("clm", "polr", "vglm"),
+  out_model = "pooled-logistic",
   treat_form = "1",
   param = c("weighted_mean", "log_odds", "mann_whitney"),
   ci = "wald",
   alpha = 0.05,
-  nboot = 10000,
+  nboot = 1000,
   return_models = TRUE,
   est_dist = TRUE,
   stratify = FALSE,
@@ -47,7 +47,8 @@ odds model. NOTE: THIS FORMULA MUST NOT SUPPRESS THE INTERCEPT.}
 of \code{out_levels}.}
 
 \item{out_model}{Which R function should be used to fit the proportional odds 
-model. Options are \code{"polr"} (from the \code{MASS} package), 
+model. The recommended option is \code{"pooled-logistic"}. Other options available include
+\code{"polr"} (from the \code{MASS} package), 
 "vglm" (from the \code{VGAM} package), or \code{"clm"} (from the \code{ordinal} package).}
 
 \item{treat_form}{The right-hand side of a regression formula for the working model of
